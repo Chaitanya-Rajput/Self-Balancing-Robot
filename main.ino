@@ -9,9 +9,9 @@
 #include <AccelStepper.h>
 
 //variables
-float kp = 5 ; //proportional
+float kp = 10 ; //proportional
 float ki = 0.5 ; //integral
-float kd = 0.2 ; //derivative
+float kd = 1 ; //derivative
 float integral = 0 ; //default intergral
 float derivative = 0; //default derivative
 float prev_err = 0 ; //default
@@ -47,6 +47,9 @@ void setup(){
       delay(10);
     }
   }
+  pinMode(4, OUTPUT);
+  digitalWrite(4,LOW);
+
   Serial.println("MPU6050 Found!");
 
   StepperL.setMaxSpeed(max_speed);
@@ -67,7 +70,7 @@ void loop(){
 
   /* Calculate the PID values */
   err_val = setpoint - x;
-  integral += ;
+  integral += err_val;
   derivative = (err_val - prev_err) / interval;
   output = ( (kp * err_val) + (ki * integral) + (kd * derivative) );
   speed = Q * output;
@@ -78,17 +81,6 @@ void loop(){
     speed = max_speed;
   }
 
-  /* Setting out the acceleration as per the x axis value */
-  if (x >= 5){
-    StepperL.setAcceleration(fast_acceleration);
-    StepperR.setAcceleration(fast_acceleration);
-  }else if( x >= 2 ){
-    StepperL.setAcceleration(medium_acceleration);
-    StepperR.setAcceleration(medium_acceleration);
-  }else{
-    StepperL.setAcceleration(slow_acceleration);
-    StepperR.setAcceleration(slow_acceleration);
-  }
 
   /* running the motors */
   StepperL.setSpeed(-speed);
@@ -100,5 +92,4 @@ void loop(){
   delay(interval);
 
 }
-
 
